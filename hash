@@ -1,0 +1,48 @@
+class HashTable:
+    def __init__(self, size):
+        self.size = size
+        self.table = [[] for _ in range(size)]
+
+    def _hash_function(self, key):
+        return hash(key) % self.size
+
+    def insert(self, key, value):
+        index = self._hash_function(key)
+        self.table[index].append((key, value))
+
+    def retrieve(self, key):
+        index = self._hash_function(key)
+        bucket = self.table[index]
+        for item in bucket:
+            if item[0] == key:
+                return item[1]
+        return None
+
+    def remove(self, key):
+        index = self._hash_function(key)
+        bucket = self.table[index]
+        for i, item in enumerate(bucket):
+            if item[0] == key:
+                del bucket[i]
+                return True
+        return False
+
+
+# Example usage
+hash_table = HashTable(10)
+
+# Insert key-value pairs
+hash_table.insert('apple', 'red')
+hash_table.insert('banana', 'yellow')
+hash_table.insert('orange', 'orange')
+
+# Retrieve values by key
+print(hash_table.retrieve('apple'))  # Output: red
+print(hash_table.retrieve('banana'))  # Output: yellow
+print(hash_table.retrieve('orange'))  # Output: orange
+
+# Remove a key-value pair
+hash_table.remove('banana')
+
+# Attempt to retrieve removed value
+print(hash_table.retrieve('banana'))  # Output: None
