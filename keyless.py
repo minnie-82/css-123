@@ -1,40 +1,43 @@
-import math
+def encrypt(plaintext, key):
+    # add padding if necessary
+    if len(plaintext) % key != 0:
+        plaintext += ' ' * (key - len(plaintext) % key)
 
-def encrypt(message):
-    cipher = ""
-    num_cols = math.ceil(math.sqrt(len(message)))  # Number of columns in the transposition grid
-    for col in range(num_cols):
-        pointer = col
-        while pointer < len(message):
-            cipher += message[pointer]
-            pointer += num_cols
-    return cipher
+    # create the ciphertext
+    ciphertext = ''
+    for i in range(key):
+        for j in range(len(plaintext) // key):
+            ciphertext += plaintext[j * key + i]
+    return ciphertext
 
-def decrypt(cipher):
-    message = ""
-    num_cols = math.ceil(math.sqrt(len(cipher)))  # Number of columns in the transposition grid
-    num_rows = math.ceil(len(cipher) / num_cols)  # Number of rows in the transposition grid
-    num_blank = (num_cols * num_rows) - len(cipher)  # Number of blank spaces in the grid
-    plaintext = [''] * num_cols
+def decrypt(ciphertext, key):
+    # create the plaintext
+    plaintext = ''
+    for i in range(len(ciphertext) // key):
+        for j in range(key):
+            plaintext += ciphertext[i + j * (len(ciphertext) // key)]
+    return plaintext.strip()
 
-    col = 0
-    row = 0
-    for symbol in cipher:
-        plaintext[col] += symbol
-        col += 1
-        if (col == num_cols) or (col == num_cols - 1 and row >= num_rows - num_blank):
-            col = 0
-            row += 1
+while True:
+    print('Transposition Cipher\n')
+    print('1. Encrypt')
+    print('2. Decrypt')
+    print('3. Quit')
+    choice = input('\nEnter your choice: ')
 
-    for col in range(num_cols):
-        message += plaintext[col]
-    return message
+    if choice == '1':
+        plaintext = input('\nEnter plaintext: ')
+        key = int(input('Enter key: '))
+        ciphertext = encrypt(plaintext, key)
+        print('\nCiphertext:', ciphertext)
 
-# Example usage
-input_message = "Hello, world!"
-encrypted_message = encrypt(input_message)
-decrypted_message = decrypt(encrypted_message)
+    elif choice == '2':
+        decrypted_plaintext = decrypt(ciphertext, key)
+        print('Decrypted plaintext:', decrypted_plaintext)
 
-print("Input message: ", input_message)
-print("Encrypted message: ", encrypted_message)
-print("Decrypted message: ", decrypted_message)
+    elif choice == '3':
+        break
+
+    else:
+        print('\nInvalid choice. Try again.')
+
